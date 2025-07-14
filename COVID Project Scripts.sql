@@ -1,3 +1,45 @@
+SELECT
+	SUM(new_cases) AS total_cases,
+	SUM(new_deaths) AS total_deaths,
+	SUM(new_deaths)/SUM(total_cases)*100 AS death_percentage
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NOT NULL
+ORDER BY 1, 2;
+
+SELECT
+	location,
+	SUM(new_deaths) AS total_deaths
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NULL
+	AND location NOT IN ('World', 'High-income countries', 'Upper-middle-income countries', 'European Union (27)', 'Lower-middle-income countries', 'Low-income countries')
+GROUP BY location
+ORDER BY 2 DESC;
+
+SELECT
+	location,
+	population,
+	MAX(total_cases) AS highest_infection_count,
+	MAX((total_cases/population))*100 AS percent_population_infected
+FROM PortfolioProject..CovidDeaths
+WHERE continent IS NOT NULL
+GROUP BY
+	location,
+	population
+ORDER BY 4 DESC
+
+SELECT
+	location,
+	population,
+	date,
+	MAX(total_cases) AS highest_infection_count,
+	MAX((total_cases/population))*100 AS percent_population_infected
+FROM PortfolioProject..CovidDeaths
+GROUP BY
+	location,
+	population,
+	date
+ORDER BY 5 DESC
+
 SELECT *
 FROM PortfolioProject..CovidDeaths
 WHERE continent IS NOT NULL
@@ -54,7 +96,9 @@ SELECT
 FROM PortfolioProject..CovidDeaths
 -- WHERE location LIKE '%states%'
 WHERE continent IS NOT NULL
-GROUP BY location, population
+GROUP BY
+	location,
+	population
 ORDER BY 4 DESC;
 
 -- Viewing by continent with highest death count
@@ -69,7 +113,8 @@ GROUP BY continent
 ORDER BY 2 DESC;
 
 -- Global Numbers
-SELECT SUM(new_cases) AS total_cases,
+SELECT 
+	SUM(new_cases) AS total_cases,
 	SUM(new_deaths) AS total_deaths,
 	SUM(new_deaths)/NULLIF(SUM(new_cases),0)*100 AS death_percentage
 FROM PortfolioProject..CovidDeaths
